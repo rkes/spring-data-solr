@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2014 the original author or authors.
+ * Copyright 2012 - 2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,7 +67,7 @@ import org.springframework.util.CollectionUtils;
 public class DefaultQueryParser extends QueryParserBase<SolrDataQuery> {
 
 	/**
-	 * Convert given Query into a SolrQuery executable via {@link org.apache.solr.client.solrj.SolrServer}
+	 * Convert given Query into a SolrQuery executable via {@link org.apache.solr.client.solrj.SolrClient}
 	 * 
 	 * @param query
 	 * @return
@@ -371,19 +371,13 @@ public class DefaultQueryParser extends QueryParserBase<SolrDataQuery> {
 	 * @param solrQuery
 	 * @param sort
 	 */
-	@SuppressWarnings("deprecation")
 	protected void appendSort(SolrQuery solrQuery, Sort sort) {
 		if (sort == null) {
 			return;
 		}
 
 		for (Order order : sort) {
-			// addSort which is to be used instead of addSortField is not available in versions below 4.2.0
-			if (VersionUtil.isSolr420Available()) {
-				solrQuery.addSort(order.getProperty(), order.isAscending() ? ORDER.asc : ORDER.desc);
-			} else {
-				solrQuery.addSortField(order.getProperty(), order.isAscending() ? ORDER.asc : ORDER.desc);
-			}
+			solrQuery.addSort(order.getProperty(), order.isAscending() ? ORDER.asc : ORDER.desc);
 		}
 	}
 
